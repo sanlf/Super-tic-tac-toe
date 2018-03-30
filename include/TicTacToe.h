@@ -3,20 +3,21 @@
 
 #include <iostream> //for cout and endl
 
-#include <memory> //for shared_ptr
+#include <string> //for std::string
 #include <allegro5/allegro.h> //for most of the game
 #include <allegro5/allegro_native_dialog.h> //for native box messages
 #include <allegro5/allegro_primitives.h> //for drawing rectangles and lines
 
 #include "Player.h" //fot Player
-#include "Board/BigBoard.h" //for BigBoard
-#include "../AllegroColors.h" //for Colors
+#include "BigBoard.h" //for BigBoard
+#include "Colors.h" //for Colors
 #include "Redefinitions.h" //for various redefinitions
-#include "../Window.h"
-#include "TicTacToeConstants.h" //for NO_WINNER, TIE
+#include "Constants.h" //for NO_WINNER, TIE
 #include "Utilities.h" //for auxiliar functions and structs
+#include "GameFonts.h" //for various fonts the game uses
+#include "Cursor.h" //for a cursor of the game
 
-#define WAIT_TIME 0.35 //wait time of timer
+extern Colors COLOR;
 
 /**
     \brief Class TicTacToe. With this you can play a game of TicTacToe81.
@@ -26,8 +27,7 @@
     \version 1.0
 */
 
-class TicTacToe
-{
+class TicTacToe{
 public:
 
     /**
@@ -45,10 +45,9 @@ public:
         \param filesFont Font to output the instruction and about texts.
         \param window Structure with the sizes of the window and screen.
     */
-    TicTacToe();
+    TicTacToe(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* eventQueue, ALLEGRO_TIMER* timer, GameFonts fonts, ALLEGRO_DISPLAY_MODE dispdata);
     
-    //Destructor
-    ~TicTacToe();
+    void reset(std::string nameP1, std::string pieceP1, std::string nameP2, std::string pieceP2);
 
     /**
         \brief Method to play the game. This is run in order to actually play.
@@ -81,18 +80,48 @@ public:
     void putPiece(std::string piece, SmallBoard& board, unsigned cell);
 
     /**
+        \brief Method to resize the cursor to the size of a board in order to select a new board.
+    */
+    void resizeCursorToBoard();
+
+    /**
+        \brief Method to resize the cursor to the size of a cell in order to select a cell.
+    */
+    void resizeCursorToCell();
+
+    /**
+        \brief Method to move the cursor across the board.
+               The movement depends on the current board. If there is none, this moves the cursor
+               through the boards. If there is a current board, the cursor moves only across the
+               cells of that board.
+    */
+    void moveCursor();
+
+    /**
         \brief Method to end the current game showing the winner if there is any.
     */
     void endgame();
 
-private:
-    int winner;
-    BigBoard bboard;
-    int turn;
-    SmallBoard currboard;
-    Stack plays; 
+    void waitForInput();
 
-    Player p1;
-    Player p2;
+private:
+    //Graphic representation related members
+    ALLEGRO_DISPLAY* m_display;
+    ALLEGRO_EVENT_QUEUE* m_eventQueue;
+    ALLEGRO_TIMER* m_timer;    
+    GameFonts m_fonts;
+    ALLEGRO_DISPLAY_MODE m_dispdata;
+    Cursor cursor;
+
+    //Game's logic related members
+    std::string m_winner;
+    BigBoard m_bboard;
+    Position m_currboardidx;
+    Player m_player1;
+    Player m_player2;
+    Player* m_turn;
+    //Stack m_plays; //Stack of plays
 };
+
+#endif //TICTACTOE_H
 

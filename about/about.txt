@@ -1,0 +1,7 @@
+Game with GUI made with Allegro5.
+
+Made by Sotomayor Samaniego Luis Fernando.
+
+Version 1.0.
+
+Hope you enjoy playing it !

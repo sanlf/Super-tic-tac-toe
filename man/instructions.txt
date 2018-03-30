@@ -1,0 +1,22 @@
+This is Tic-Tac-Toe with a tweak, instead of only one board with nine cells, this has a board with nine smaller boards with nine cells each one! 81 cells in total!
+
+The objective of the game is the same as a regular tic-tac-toe: to make 3 cells in a row. The difference here is that instead of 3 cells, you have to make 3 small BOARDS in a row.
+As you may have expected, in order to be the winner of a particular board you have to have 3 cells of your own in a row.
+
+What I mean with "making 3 in a row" is to put your piece in a way were vertically, horizontally or diagonally there are 3 of your pieces next to each other.
+
+What makes this game special is the next rule: when you put a piece in a cell, the next player has to put his piece in the board relative to the position of the piece. For example:
+If player1 puts a piece in the center board in its top left cell, the next player has to put a piece in the top left board.
+
+The exception to the previous rule is when the board the next player is sent to has already a winner (or ended in a tie), then the player in turn has the option to pick in what big board he wants to put his piece (provided it doesn't have a winner yet).
+
+Maybe needless to say but you can't put a piece where there is already one.
+
+
+The game continues until a player wins or nobody can put anymore pieces and ends up in a tie.
+
+
+The whole game is played with a keyboard. You move the cursor with the arrows and select things with ENTER. At any moment of the game you can exit with ESC to the menu. If ESC is pressed while in the menu, the window is closed.
+
+Have fun!
+
