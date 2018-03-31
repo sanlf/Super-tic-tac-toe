@@ -1,5 +1,6 @@
 #include "../include/Utilities.h"
 
+/**************************************************************************************************/
 std::string readFile(const std::string& filePath)
 {
     std::ifstream file;
@@ -19,7 +20,7 @@ std::string readFile(const std::string& filePath)
 
     return text;
 }
-
+/**************************************************************************************************/
 void handleReturnToMenu(ALLEGRO_EVENT_QUEUE* eventQueue)
 {
     ALLEGRO_EVENT event;
@@ -31,3 +32,5 @@ void handleReturnToMenu(ALLEGRO_EVENT_QUEUE* eventQueue)
                 break;
     }
 }
+/**************************************************************************************************/
+

@@ -11,9 +11,18 @@ TicTacToe::TicTacToe(ALLEGRO_DISPLAY* display,
                                                     m_timer(timer),
                                                     m_fonts(fonts),
                                                     m_dispdata(dispdata),
+                                                    m_cursor(m_bboard),
                                                     m_winner(NO_WINNER),
-                                                    m_bboard(Point(0,0), Point(dispdata.width, 0.8*dispdata.height)),
-                                                    m_currboardidx(Position::NONE)
+                                                    m_bboard(Point(0,0),
+                                                             Point(dispdata.width,
+                                                                   0.8*dispdata.height)),
+                                                    m_currboardidx(Position::NONE),
+                                                    m_player1("P1", "X",
+                                                              Type::HUMAN,
+                                                              m_bboard),
+                                                    m_player2("P2", "O",
+                                                              Type::HUMAN,
+                                                              m_bboard)
 {
     m_turn = &m_player1;
     reset("PLAYER1", "X", "PLAYER2", "O");
@@ -21,41 +30,177 @@ TicTacToe::TicTacToe(ALLEGRO_DISPLAY* display,
 /**************************************************************************************************/
 void TicTacToe::play()
 {
-}
-/*
-{
-    int position = 0;
-    if(m_currboardidx == Position::NONE){
-        if(m_turn->ishuman()){
-            waitForInput();
-        }else{ //turn player is ai 
-            //play = decideplay();
+    bool redraw = true;
+    bool redrawCursor = false;
+    ALLEGRO_EVENT ev;
+
+    al_start_timer(m_timer);
+    while(m_winner == NO_WINNER){
+        al_wait_for_event(m_eventQueue, &ev);
+
+        if(ev.type == ALLEGRO_EVENT_TIMER)
+            redraw = true;
+
+        if(redraw && al_is_event_queue_empty(m_eventQueue)){
+            redraw = false;
+
+            draw();
         }
-        //choice board as a human or as ia
-        m_currboardidx = chosenboard;
-    {
 
-    //chooses and puts a piece in a cell
-    putPiece(position);
-    updateWinner();
-    
-    //update winner
-    if(winner != NO_WINNER){
-        endgame();
-    }else{
-        if(bboard[position].winner == NO_WINNER)
-            m_currboardidx = position;
-        else
-            m_currboardidx = Position::NONE;
+        if(m_turn->getType() == Type::HUMAN){
+            handleUserInput(&ev);    
+        }else{
+            //handleAIplay
+        }
 
-        //puts last play in stack
-        plays.push(turn.piece, currboard, position);
+        if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
+            break;
+    }
 
-        //change turn
-        turn = turn == &p1? &p2 : &p1;
+    endgame();
+
+    al_clear_to_color(COLOR.BACKGROUND);
+    handleReturnToMenu(m_eventQueue);
+}
+/**************************************************************************************************/
+void TicTacToe::endgame()
+{
+    if(m_winner != NO_WINNER){
+        if(m_winner != TIE){
+             std::string msg = ", you won!";
+             Player* winner = m_player1.getPiece() == m_winner ? &m_player1 : &m_player2;
+             al_show_native_message_box(m_display,
+                                        "Congratulations!",
+                                        "Congratulations!",
+                                        (winner->getName() + msg).c_str(),
+                                        nullptr, ALLEGRO_MESSAGEBOX_OK_CANCEL );
+         }else{
+             std::string msg = "The game ended in a tie";
+             al_show_native_message_box(m_display,
+                                    "Tie",
+                                  "Tie",
+                                  msg.c_str(),
+                                  nullptr, ALLEGRO_MESSAGEBOX_OK_CANCEL );
+         }
     }
 }
-*/
+/**************************************************************************************************/
+void TicTacToe::handleUserInput(ALLEGRO_EVENT* ev)
+{
+    if(ev->type == ALLEGRO_EVENT_KEY_UP){ //handles keyboard
+        handleKeyboardInput(ev);
+    }//else if(ev->type == ALLEGRO_MOUSE_SOMETHING??)
+}
+/**************************************************************************************************/
+void TicTacToe::handleKeyboardInput(ALLEGRO_EVENT* ev)
+{
+   switch(ev->keyboard.keycode){
+        case ALLEGRO_KEY_UP:
+                m_cursor.move(Position::UP);
+            break;
+
+        case ALLEGRO_KEY_DOWN:
+                m_cursor.move(Position::DOWN);
+            break;
+
+        case ALLEGRO_KEY_LEFT:
+                m_cursor.move(Position::LEFT);
+            break;
+
+        case ALLEGRO_KEY_RIGHT:
+                m_cursor.move(Position::RIGHT);
+            break;
+
+        case ALLEGRO_KEY_ENTER:
+            if(m_currboardidx == Position::NONE){   //selecting a board
+                selectBoard(m_cursor.m_boardidx);
+            }else{                                  //selecting a cell 
+                selectCell(m_cursor.m_cellidx);
+            }
+            break;
+
+        case ALLEGRO_KEY_ESCAPE:
+            ev->type = ALLEGRO_EVENT_DISPLAY_CLOSE;        
+            break;
+    } 
+}
+/**************************************************************************************************/
+bool TicTacToe::selectBoard(int position)
+{
+    if(m_bboard[position].getWinner() == NO_WINNER){
+        m_currboardidx = static_cast<Position>(position);
+        m_cursor.reposition(position, static_cast<int>(Position::LEFT_UP));  
+        //put this in the stack
+
+        return true;
+    }
+
+    m_cursor.draw(COLOR.CURSOR_ERROR);
+    al_flip_display();
+    al_rest(1);
+
+    return false;
+}
+/**************************************************************************************************/
+bool TicTacToe::selectCell(int position)
+{
+    if(!putPiece())
+        return false;
+
+    //put play in stack
+    //
+    updateWinner();
+
+    if(m_bboard[position].getWinner() == NO_WINNER){
+        m_currboardidx = static_cast<Position>(position);
+        m_cursor.reposition(position, static_cast<int>(Position::LEFT_UP));  
+    }else{
+        m_currboardidx = Position::NONE;
+        m_cursor.reposition(static_cast<int>(Position::LEFT_UP));  
+    }       
+
+   changeTurn(); 
+
+    return true;
+}
+/**************************************************************************************************/
+bool TicTacToe::putPiece()
+{
+    if(m_currboardidx == Position::NONE) //there is no board selected
+        return false;
+
+    if(m_bboard[m_currboardidx][m_cursor.m_cellidx].piece != EMPTY) //the cell is already ocuppied
+        return false;
+
+    m_bboard[m_currboardidx][m_cursor.m_cellidx].piece = m_turn->getPiece();
+    return true;
+}
+/**************************************************************************************************/
+void TicTacToe::updateWinner()
+{
+    m_bboard.updateWinner();
+}
+/**************************************************************************************************/
+void TicTacToe::draw()
+{
+    al_clear_to_color(COLOR.BACKGROUND);
+    m_bboard.draw(m_fonts.normal);
+    
+    //just to know the limits
+    ////////////////////////
+    al_draw_rectangle(m_bboard.m_p0.x, m_bboard.m_p0.y, m_bboard.m_p1.x, m_bboard.m_p1.y, COLOR.WHITE, 3);
+    
+    for(auto board : m_bboard.m_boards)
+        al_draw_rectangle(board.m_p0.x, board.m_p0.y, board.m_p1.x, board.m_p1.y, COLOR.BLUE, 3);
+
+    float last = (m_dispdata.height - m_bboard.m_p1.y) * .8;
+    al_draw_rectangle(m_bboard.m_p0.x, m_bboard.m_p1.y + 10, m_bboard.m_p1.x, m_bboard.m_p1.y + last, COLOR.WHITE, 3);
+    ////////////////////////
+    
+    m_cursor.draw(COLOR.PURPLE);
+
+    al_flip_display();
+}
 /**************************************************************************************************/
 void TicTacToe::run()
 {
@@ -141,21 +286,6 @@ void TicTacToe::menu()
     }
 }
 /**************************************************************************************************/
-void TicTacToe::resizeCursorToBoard()
-{
-    m_currboardidx = Position::NONE;
-    cursor.p0 = m_bboard[Position::CENTER].m_p0; //any position will do, just chose center
-    cursor.p1 = m_bboard[Position::CENTER].m_p1; //because is the shorter to write
-}
-/**************************************************************************************************/
-void TicTacToe::resizeCursorToCell()
-{
-    if(m_currboardidx >= 0 && m_currboardidx < 9){
-        cursor.p0 = m_bboard[m_currboardidx].m_p0;
-        cursor.p1 = m_bboard[m_currboardidx].m_p1;
-    }
-}
-/**************************************************************************************************/
 void TicTacToe::displayAbout()
 {
     std::string about = readFile("about/about.txt");
@@ -197,7 +327,7 @@ void TicTacToe::reset(std::string nameP1, std::string pieceP1, std::string nameP
     
     //empy the stack of plays
 
-    resizeCursorToBoard();
+    //reset cursor
 }
 /**************************************************************************************************/
 

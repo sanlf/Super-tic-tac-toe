@@ -8,11 +8,11 @@
 #include <allegro5/allegro_native_dialog.h> //for native box messages
 #include <allegro5/allegro_primitives.h> //for drawing rectangles and lines
 
-#include "Player.h" //fot Player
+#include "Player.h" //for Player
 #include "BigBoard.h" //for BigBoard
 #include "Colors.h" //for Colors
-#include "Redefinitions.h" //for various redefinitions
 #include "Constants.h" //for NO_WINNER, TIE
+#include "Enumerations.h" //for Type and Position enumerations
 #include "Utilities.h" //for auxiliar functions and structs
 #include "GameFonts.h" //for various fonts the game uses
 #include "Cursor.h" //for a cursor of the game
@@ -77,32 +77,24 @@ public:
     /**
         \brief Method to put a piece in a cell of a small board.
     */
-    void putPiece(std::string piece, SmallBoard& board, unsigned cell);
+    bool putPiece();
 
-    /**
-        \brief Method to resize the cursor to the size of a board in order to select a new board.
-    */
-    void resizeCursorToBoard();
-
-    /**
-        \brief Method to resize the cursor to the size of a cell in order to select a cell.
-    */
-    void resizeCursorToCell();
-
-    /**
-        \brief Method to move the cursor across the board.
-               The movement depends on the current board. If there is none, this moves the cursor
-               through the boards. If there is a current board, the cursor moves only across the
-               cells of that board.
-    */
-    void moveCursor();
+    void draw();
 
     /**
         \brief Method to end the current game showing the winner if there is any.
     */
     void endgame();
 
-    void waitForInput();
+    void handleUserInput(ALLEGRO_EVENT* ev);
+    void handleKeyboardInput(ALLEGRO_EVENT* ev);
+
+    void updateWinner();
+
+    bool selectBoard(int position);
+    bool selectCell(int position);
+
+    void changeTurn() {m_turn = m_turn == &m_player1 ? &m_player2 : &m_player1;}
 
 private:
     //Graphic representation related members
@@ -111,7 +103,7 @@ private:
     ALLEGRO_TIMER* m_timer;    
     GameFonts m_fonts;
     ALLEGRO_DISPLAY_MODE m_dispdata;
-    Cursor cursor;
+    Cursor m_cursor;
 
     //Game's logic related members
     std::string m_winner;

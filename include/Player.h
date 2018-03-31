@@ -2,6 +2,8 @@
 #define PLAYER_H
 
 #include <string> //for string
+#include "Enumerations.h" //for Type and Position enumerations
+#include "BigBoard.h" //for BigBoard
 
 /**
     \brief Class Player of tic-tac-toe. The player has a name and a piece. 
@@ -19,7 +21,7 @@ class Player
             \param piece Piece the player would like to play with.
             \param name Name of the player.
         */
-        Player(std::string name = "Player1", std::string piece = "X"): m_piece(piece), m_name(name) {}
+        Player(std::string name, std::string piece, Type type, const BigBoard& board);
 
         /**
             \brief Method to get the piece of the player.
@@ -32,6 +34,8 @@ class Player
             \return Name of the player.
         */
         std::string getName() const { return m_name; }
+
+        Type getType() const { return m_type; }
 
         /**
             \brief Method to set the piece of the player.
@@ -46,8 +50,10 @@ class Player
         void setName(std::string newName) { m_name = newName; }
 
     private:
-        std::string m_piece;
         std::string m_name;
+        std::string m_piece;
+        Type m_type;
+        const BigBoard& m_board;
 };
 
 #endif // PLAYER_H

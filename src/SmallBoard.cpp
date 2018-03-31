@@ -3,6 +3,11 @@
 /**************************************************************************************************/
 SmallBoard::SmallBoard(Point p0, Point p1)
 {
+    setLocations(p0, p1);
+}
+/**************************************************************************************************/
+void SmallBoard::setLocations(Point p0, Point p1)
+{
     float spacex = 0.05 * fabs(p0.x - p1.x);
     float spacey = 0.05 * fabs(p0.y - p1.y);
 
@@ -12,22 +17,14 @@ SmallBoard::SmallBoard(Point p0, Point p1)
     m_width = fabs(m_p0.x - m_p1.x);
     m_height = fabs(m_p0.y - m_p1.y);
 
-    this->resetlocation(p0, p1);
-}
-/**************************************************************************************************/
-void SmallBoard::resetlocation(Point p0, Point p1)
-{
-    m_p0 = p0;
-    m_p1 = p1;
-
     float cwidth = m_width / 3.0;
     float cheight = m_height / 3.0;
     
     for(int i = 0; i < 9; ++i){
-        m_cells[i].p0 = Point(m_p0.x + (i % 3) * cwidth,
-                              m_p0.y + (i / 3) * cheight);
-        m_cells[i].p1 = Point(m_p1.x + (i%3 + 1) * cwidth,
-                              m_p1.y + (i/3 + 1) * cheight);
+        Point pa(m_p0.x + (i % 3) * cwidth, m_p0.y + (i / 3) * cheight);
+        Point pb(pa.x + cwidth, pa.y + cheight);
+        m_cells[i].p0 = pa;
+        m_cells[i].p1 = pb;
     }
 }
 /**************************************************************************************************/
@@ -45,11 +42,11 @@ void SmallBoard::reset()
 void SmallBoard::draw(ALLEGRO_FONT* font) const
 {
     //vertical lines
-    al_draw_line(m_cells[0].p1.x, m_cells[0].p0.y, m_cells[0].p1.x, m_cells[8].p1.y, COLOR.BOARD_COLOR, 3);
-    al_draw_line(m_cells[1].p1.x, m_cells[0].p0.y, m_cells[1].p1.x, m_cells[8].p1.y, COLOR.BOARD_COLOR, 3);
+    al_draw_line(m_p0.x + 1.0*m_width/3.0, m_p0.y, m_p0.x + 1.0*m_width/3.0, m_p1.y, COLOR.CELL_COLOR, 3);
+    al_draw_line(m_p0.x + 2.0*m_width/3.0, m_p0.y, m_p0.x + 2.0*m_width/3.0, m_p1.y, COLOR.CELL_COLOR, 3);
     //horizontal lines
-    al_draw_line(m_cells[0].p0.x, m_cells[0].p1.y, m_cells[8].p1.x, m_cells[0].p1.y, COLOR.BOARD_COLOR, 3);
-    al_draw_line(m_cells[0].p0.x, m_cells[3].p1.y, m_cells[8].p1.x, m_cells[3].p1.y, COLOR.BOARD_COLOR, 3);
+    al_draw_line(m_p0.x, m_p0.y + 1.0*m_height/3.0, m_p1.x, m_p0.y + 1.0*m_height/3.0, COLOR.CELL_COLOR, 3);
+    al_draw_line(m_p0.x, m_p0.y + 2.0*m_height/3.0, m_p1.x, m_p0.y + 2.0*m_height/3.0, COLOR.CELL_COLOR, 3);
 
 
     //writes the letter in the cells
@@ -146,63 +143,60 @@ void SmallBoard::drawWinner(ALLEGRO_FONT* font) const
     al_draw_line(p0.x, p0.y, p1.x, p1.y, COLOR.WHITE, LINE_THICKNESS);
 }
 /**************************************************************************************************/
-std::string SmallBoard::checkWinner()
+void SmallBoard::updateWinner()
 {
-    if(m_winner != NO_WINNER)
-       return m_winner; 
+    if(m_winner != NO_WINNER) //if there is already a winner there is no reason to check
+        return;
 
     //left to right diagonal
-    if(m_cells[Position::CENTER].piece == EMPTY &&
+    if(m_cells[Position::CENTER].piece != EMPTY &&
        m_cells[Position::CENTER].piece == m_cells[Position::LEFT_UP].piece &&
        m_cells[Position::CENTER].piece == m_cells[Position::RIGHT_DOWN].piece)
         m_winner = m_cells[Position::CENTER].piece;
     
     //right to left diagonal
-    if(m_cells[Position::CENTER].piece == EMPTY &&
-       m_cells[Position::CENTER].piece == m_cells[Position::RIGHT_UP].piece &&
-       m_cells[Position::CENTER].piece == m_cells[Position::LEFT_DOWN].piece)
+    else if(m_cells[Position::CENTER].piece != EMPTY &&
+            m_cells[Position::CENTER].piece == m_cells[Position::RIGHT_UP].piece &&
+            m_cells[Position::CENTER].piece == m_cells[Position::LEFT_DOWN].piece)
         m_winner = m_cells[Position::CENTER].piece;
     
     //horizontal center
-    if(m_cells[Position::CENTER].piece == EMPTY &&
-       m_cells[Position::CENTER].piece == m_cells[Position::LEFT_CENTER].piece &&
-       m_cells[Position::CENTER].piece == m_cells[Position::RIGHT_CENTER].piece)
+    else if(m_cells[Position::CENTER].piece != EMPTY &&
+            m_cells[Position::CENTER].piece == m_cells[Position::LEFT_CENTER].piece &&
+            m_cells[Position::CENTER].piece == m_cells[Position::RIGHT_CENTER].piece)
         m_winner = m_cells[Position::CENTER].piece;
     
     //vertical center
-    if(m_cells[Position::CENTER].piece == EMPTY &&
-       m_cells[Position::CENTER].piece == m_cells[Position::CENTER_UP].piece &&
-       m_cells[Position::CENTER].piece == m_cells[Position::CENTER_DOWN].piece)
+    else if(m_cells[Position::CENTER].piece != EMPTY &&
+            m_cells[Position::CENTER].piece == m_cells[Position::CENTER_UP].piece &&
+            m_cells[Position::CENTER].piece == m_cells[Position::CENTER_DOWN].piece)
         m_winner = m_cells[Position::CENTER].piece;
     
     //horizontal up
-    if(m_cells[Position::LEFT_UP].piece == EMPTY &&
-       m_cells[Position::LEFT_UP].piece == m_cells[Position::CENTER_UP].piece &&
-       m_cells[Position::LEFT_UP].piece == m_cells[Position::RIGHT_UP].piece)
+    else if(m_cells[Position::LEFT_UP].piece != EMPTY &&
+            m_cells[Position::LEFT_UP].piece == m_cells[Position::CENTER_UP].piece &&
+            m_cells[Position::LEFT_UP].piece == m_cells[Position::RIGHT_UP].piece)
         m_winner = m_cells[Position::LEFT_UP].piece;
     
     //vertical left
-    if(m_cells[Position::LEFT_UP].piece == EMPTY &&
-       m_cells[Position::LEFT_UP].piece == m_cells[Position::LEFT_CENTER].piece &&
-       m_cells[Position::LEFT_UP].piece == m_cells[Position::LEFT_DOWN].piece)
+    else if(m_cells[Position::LEFT_UP].piece != EMPTY &&
+            m_cells[Position::LEFT_UP].piece == m_cells[Position::LEFT_CENTER].piece &&
+            m_cells[Position::LEFT_UP].piece == m_cells[Position::LEFT_DOWN].piece)
         m_winner = m_cells[Position::LEFT_UP].piece;
 
     //horizontal down
-    if(m_cells[Position::RIGHT_DOWN].piece == EMPTY &&
-       m_cells[Position::RIGHT_DOWN].piece == m_cells[Position::LEFT_DOWN].piece &&
-       m_cells[Position::RIGHT_DOWN].piece == m_cells[Position::CENTER_DOWN].piece)
+    else if(m_cells[Position::RIGHT_DOWN].piece != EMPTY &&
+            m_cells[Position::RIGHT_DOWN].piece == m_cells[Position::LEFT_DOWN].piece &&
+            m_cells[Position::RIGHT_DOWN].piece == m_cells[Position::CENTER_DOWN].piece)
         m_winner = m_cells[Position::RIGHT_DOWN].piece;
     
     //vertical right
-    if(m_cells[Position::RIGHT_DOWN].piece == EMPTY &&
-       m_cells[Position::RIGHT_DOWN].piece == m_cells[Position::RIGHT_UP].piece &&
-       m_cells[Position::RIGHT_DOWN].piece == m_cells[Position::RIGHT_CENTER].piece)
+    else if(m_cells[Position::RIGHT_DOWN].piece != EMPTY &&
+            m_cells[Position::RIGHT_DOWN].piece == m_cells[Position::RIGHT_UP].piece &&
+            m_cells[Position::RIGHT_DOWN].piece == m_cells[Position::RIGHT_CENTER].piece)
         m_winner = m_cells[Position::RIGHT_DOWN].piece;
 
-    if(std::all_of(m_cells.begin(), m_cells.end(), [](auto cell){return cell.piece != EMPTY;}))
+    else if(std::all_of(m_cells.begin(), m_cells.end(), [](auto cell){return cell.piece != EMPTY;}))
         m_winner = TIE;
-     
-    return m_winner;
 }
 /**************************************************************************************************/
-

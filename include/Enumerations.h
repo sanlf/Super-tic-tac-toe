@@ -8,5 +8,8 @@ enum Position{LEFT_UP, CENTER_UP, RIGHT_UP,
                     UP, DOWN,
                     NONE = -1};
 
+enum class Type{HUMAN, AI};
+enum class Mode{BOARD, CELL};
+
 #endif //ENUMERATIONS_H
 

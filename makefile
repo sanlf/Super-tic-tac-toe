@@ -18,7 +18,7 @@ WINDIR32 = bin/Windows32
 WINODIR64 = obj/Windows64
 WINDIR64 = bin/Windows64
 
-GENMOD = TicTacToe BigBoard SmallBoard Cell Cursor Colors Utilities
+GENMOD = TicTacToe BigBoard SmallBoard Cell Cursor Colors Utilities Player Point
 
 _DEPS = 
 DEPS = $(patsubst %, $(IDIR)/%.h, $(_DEPS) $(GENMOD))

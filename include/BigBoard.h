@@ -29,6 +29,7 @@ class BigBoard
     public:
 
         friend class TicTacToe;
+        friend class Cursor;
 
         explicit BigBoard(Point p0 = Point(0,0), Point p1 = Point(0,0));
 
@@ -42,7 +43,7 @@ class BigBoard
         */
         void reset();
 
-        void resetlocation(Point p0, Point p1);
+        void setLocations(Point p0, Point p1);
 
         /**
             \brief Method to draw the whole board.
@@ -62,6 +63,7 @@ class BigBoard
             \return Small board in the received position.
         */
         SmallBoard& operator[](Position position) { return m_boards[position]; }
+        SmallBoard& operator[](int position) { return m_boards[position]; }
 
         /**
             \brief Overload of the const operator []. This will get you the small board in the received position.
@@ -69,8 +71,9 @@ class BigBoard
             \return Small board in the received position.
         */
         const SmallBoard& operator[](Position position) const { return m_boards[position]; }
+        const SmallBoard& operator[](int position) const { return m_boards[position]; }
 
-        std::string checkWinner();
+        void updateWinner();
 
     private:
         //Graphic representation related members

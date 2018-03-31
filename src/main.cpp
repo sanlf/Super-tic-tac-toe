@@ -5,8 +5,8 @@
 #include <allegro5/allegro_font.h> //for allegro font
 #include <allegro5/allegro_ttf.h> //for allegro true type font
 
-#include "TicTacToe.h" //for the game
-#include "GameFonts.h" //for various fonts the game uses
+#include "../include/TicTacToe.h" //for the game
+#include "../include/GameFonts.h" //for various fonts the game uses
 
 int main(int argc, char **argv)
 {
@@ -58,8 +58,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    const float WAIT_TIME = 0.35;
-    std::shared_ptr<ALLEGRO_TIMER> timer(al_create_timer(WAIT_TIME), al_destroy_timer);
+    std::shared_ptr<ALLEGRO_TIMER> timer(al_create_timer(1.0 / FPS), al_destroy_timer);
     if(timer == nullptr){
         std::cerr << "Failed to create timer!" << std::endl;
         return 1;

@@ -30,6 +30,7 @@ class SmallBoard
 
         friend class TicTacToe;
         friend class BigBoard;
+        friend class Cursor;
         
         explicit SmallBoard(Point p0 = Point(0,0), Point p1 = Point(0,0));
 
@@ -43,7 +44,7 @@ class SmallBoard
         */
         void reset();
 
-        void resetlocation(Point p0, Point p1);
+        void setLocations(Point p0, Point p1);
 
         /**
             \brief Method to draw the whole board.
@@ -64,16 +65,22 @@ class SmallBoard
             \param position Position of the small board you want.
             \return Small board in the received position.
         */
-        std::string& operator[](Position position) { return m_cells[position].piece; }
+        //std::string& operator[](Position position) { return m_cells[position].piece; }
+        //std::string& operator[](int position) { return m_cells[position].piece; }
+        Cell& operator[](Position position) { return m_cells[position]; }
+        Cell& operator[](int position) { return m_cells[position]; }
 
         /**
             \brief Overload of the const operator []. This will get you the small board in the received position.
             \param position Position of the small board you want.
             \return Small board in the received position.
         */
-        const std::string& operator[](Position position) const { return m_cells[position].piece; }
+        //const std::string& operator[](Position position) const { return m_cells[position].piece; }
+        //const std::string& operator[](int position) const { return m_cells[position].piece; }
+        const Cell& operator[](Position position) const { return m_cells[position]; }
+        const Cell& operator[](int position) const { return m_cells[position]; }
 
-        std::string checkWinner();
+        void updateWinner();
 
     private:
         //Graphic representation related members
