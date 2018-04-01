@@ -2,7 +2,9 @@
 #define PLAYER_H
 
 #include <string> //for string
+
 #include "Enumerations.h" //for Type and Position enumerations
+#include "Colors.h" //for struct Colors
 #include "BigBoard.h" //for BigBoard
 
 /**
@@ -21,7 +23,7 @@ class Player
             \param piece Piece the player would like to play with.
             \param name Name of the player.
         */
-        Player(std::string name, std::string piece, Type type, const BigBoard& board);
+        Player(std::string name, std::string piece, Type type, const BigBoard& board, ALLEGRO_COLOR color);
 
         /**
             \brief Method to get the piece of the player.
@@ -34,6 +36,8 @@ class Player
             \return Name of the player.
         */
         std::string getName() const { return m_name; }
+
+        ALLEGRO_COLOR getColor() const { return m_color; }
 
         Type getType() const { return m_type; }
 
@@ -54,6 +58,7 @@ class Player
         std::string m_piece;
         Type m_type;
         const BigBoard& m_board;
+        ALLEGRO_COLOR m_color;
 };
 
 #endif // PLAYER_H

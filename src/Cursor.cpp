@@ -103,9 +103,6 @@ void Cursor::move(Position position)
 
         m_p0 = m_board[m_boardidx][m_cellidx].p0;
         m_p1 = m_board[m_boardidx][m_cellidx].p1;
-
-        std::cout << "bidx: " << m_boardidx << std::endl;
-        std::cout << "cidx: " << m_cellidx << std::endl;
     }
 }
 /**************************************************************************************************/

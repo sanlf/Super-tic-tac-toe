@@ -19,10 +19,12 @@ TicTacToe::TicTacToe(ALLEGRO_DISPLAY* display,
                                                     m_currboardidx(Position::NONE),
                                                     m_player1("P1", "X",
                                                               Type::HUMAN,
-                                                              m_bboard),
+                                                              m_bboard,
+                                                              COLOR.CURSOR_P1),
                                                     m_player2("P2", "O",
                                                               Type::HUMAN,
-                                                              m_bboard)
+                                                              m_bboard,
+                                                              COLOR.CURSOR_P2)
 {
     m_turn = &m_player1;
     reset("PLAYER1", "X", "PLAYER2", "O");
@@ -213,16 +215,16 @@ void TicTacToe::drawGameInfo()
     std::string currentPlayer = "Turn: " + m_turn->getName();
     float spaceFromBoard = 10;
 
-    al_draw_text(m_fonts.normal, COLOR.WHITE,
+    al_draw_text(m_fonts.normal, m_player1.getColor(),
                  m_bboard.m_p0.x, m_bboard.m_p1.y + spaceFromBoard,
                  ALLEGRO_ALIGN_LEFT, player1.c_str());
 
-    al_draw_text(m_fonts.normal, COLOR.WHITE,
+    al_draw_text(m_fonts.normal, m_player2.getColor(),
                  m_bboard.m_p1.x, m_bboard.m_p1.y + spaceFromBoard,
                  ALLEGRO_ALIGN_RIGHT, player2.c_str());
 
     float xcenter = (m_bboard.m_p0.x + m_bboard.m_p1.x) / 2.0;
-    al_draw_text(m_fonts.normal, COLOR.WHITE,
+    al_draw_text(m_fonts.normal, m_turn->getColor(),
                  xcenter, m_bboard.m_p1.y + spaceFromBoard,
                  ALLEGRO_ALIGN_CENTER, currentPlayer.c_str());
 }
