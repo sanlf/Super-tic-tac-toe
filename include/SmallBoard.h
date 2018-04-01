@@ -5,6 +5,7 @@
 #include <algorithm> //for std::all_of
 #include <string> //for string
 #include <math.h> //for fabs
+
 #include <allegro5/allegro.h> //for draw primitives
 #include <allegro5/allegro_primitives.h> //for draw primitives
 #include <allegro5/allegro_font.h> //for allegro font
@@ -58,7 +59,7 @@ class SmallBoard
             \param display Display where the board will be drawn.
             \param font Font to use to draw the elements of the board.
         */
-        void drawWinner(ALLEGRO_FONT* font) const;
+        void drawWinner() const;
 
         /**
             \brief Overload of the operator []. This will get you the small board in the received position.

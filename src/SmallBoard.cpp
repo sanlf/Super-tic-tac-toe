@@ -4,6 +4,8 @@
 SmallBoard::SmallBoard(Point p0, Point p1)
 {
     setLocations(p0, p1);
+
+    m_winner = NO_WINNER;
 }
 /**************************************************************************************************/
 void SmallBoard::setLocations(Point p0, Point p1)
@@ -30,11 +32,8 @@ void SmallBoard::setLocations(Point p0, Point p1)
 /**************************************************************************************************/
 void SmallBoard::reset()
 {
-    for(auto cell : m_cells)
+    for(auto& cell : m_cells)
         cell.reset(); 
-
-    //for(auto it = m_winningLine.begin(); m_winningLine.end(); ++it)
-    //  *it = -1;
 
     m_winner = NO_WINNER;
 }
@@ -50,13 +49,11 @@ void SmallBoard::draw(ALLEGRO_FONT* font) const
 
 
     //writes the letter in the cells
-    for(auto cell : m_cells)
+    for(const auto& cell : m_cells)
         cell.draw(font); 
-
-    this->drawWinner(font); 
 }
 /**************************************************************************************************/
-void SmallBoard::drawWinner(ALLEGRO_FONT* font) const
+void SmallBoard::drawWinner() const
 {
     if(m_winner == NO_WINNER){
         return;
@@ -99,7 +96,7 @@ void SmallBoard::drawWinner(ALLEGRO_FONT* font) const
         p0.x = m_p0.x + m_width/2.0;
         p0.y = m_p0.y;
         p1.x = p0.x;
-        p1.y = m_p0.y;
+        p1.y = m_p1.y;
     }
 
     //horizontal up
@@ -200,3 +197,4 @@ void SmallBoard::updateWinner()
         m_winner = TIE;
 }
 /**************************************************************************************************/
+

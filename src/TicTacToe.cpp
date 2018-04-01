@@ -33,7 +33,7 @@ TicTacToe::TicTacToe(ALLEGRO_DISPLAY* display,
 void TicTacToe::play()
 {
     bool redraw = true;
-    bool redrawCursor = false;
+    //bool redrawCursor = false;
     ALLEGRO_EVENT ev;
 
     al_start_timer(m_timer);
@@ -189,13 +189,15 @@ void TicTacToe::draw()
     m_bboard.draw(m_fonts.normal);
 
     drawGameInfo();
+
+    drawBoardWinners();
     
     //just to know the limits
     ////////////////////////
     /*
     al_draw_rectangle(m_bboard.m_p0.x, m_bboard.m_p0.y, m_bboard.m_p1.x, m_bboard.m_p1.y, COLOR.WHITE, 3);
     
-    for(auto board : m_bboard.m_boards)
+    for(const auto& board : m_bboard.m_boards)
         al_draw_rectangle(board.m_p0.x, board.m_p0.y, board.m_p1.x, board.m_p1.y, COLOR.BLUE, 3);
 
     float last = (m_dispdata.height - m_bboard.m_p1.y) * .8;
@@ -229,6 +231,14 @@ void TicTacToe::drawGameInfo()
                  ALLEGRO_ALIGN_CENTER, currentPlayer.c_str());
 }
 /**************************************************************************************************/
+void TicTacToe::drawBoardWinners()
+{
+    for(const auto& board : m_bboard.m_boards)
+        board.drawWinner();
+
+    m_bboard.drawWinner();
+}
+/**************************************************************************************************/
 void TicTacToe::run()
 {
     menu();
@@ -257,7 +267,7 @@ void TicTacToe::menu()
 
         //draws all menu options
         txtpos.y = height/3.0;
-        for(auto option : menuOption){
+        for(const auto& option : menuOption){
             if(option != menuOption[curridx]){
                 al_draw_text(m_fonts.selection,
                              COLOR.WHITE, txtpos.x, txtpos.y,
@@ -346,6 +356,7 @@ void TicTacToe::reset(std::string nameP1, std::string pieceP1, std::string nameP
     m_player1.setPiece(pieceP1);
     m_player2.setName(nameP2);
     m_player2.setPiece(pieceP2);
+    m_cursor.reposition(Position::LEFT_UP);
 
     m_currboardidx = Position::NONE;
     m_turn = &m_player1;

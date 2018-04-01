@@ -55,7 +55,7 @@ class BigBoard
             \brief Method to mark a board as won by someone.
             \param font Font to use to draw the elements of the board.
         */
-        void drawWinner(ALLEGRO_FONT* font) const;
+        void drawWinner() const;
 
         /**
             \brief Overload of the operator []. This will get you the small board in the received position.

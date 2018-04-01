@@ -1,8 +1,6 @@
 #ifndef TICTACTOE_H
 #define TICTACTOE_H
 
-#include <iostream> //for cout and endl
-
 #include <string> //for std::string
 #include <allegro5/allegro.h> //for most of the game
 #include <allegro5/allegro_native_dialog.h> //for native box messages
@@ -97,6 +95,8 @@ public:
     void changeTurn() {m_turn = m_turn == &m_player1 ? &m_player2 : &m_player1;}
 
     void drawGameInfo();
+
+    void drawBoardWinners();
 
 private:
     //Graphic representation related members

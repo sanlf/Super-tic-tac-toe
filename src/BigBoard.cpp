@@ -4,6 +4,8 @@
 BigBoard::BigBoard(Point p0, Point p1)
 {
     this->setLocations(p0, p1);
+
+    m_winner = NO_WINNER;
 }
 /**************************************************************************************************/
 void BigBoard::setLocations(Point p0, Point p1)
@@ -11,15 +13,15 @@ void BigBoard::setLocations(Point p0, Point p1)
     float spacex    = 0.05 * fabs(p0.x - p1.x);
     float spacey    = 0.05 * fabs(p0.y - p1.y);
 
-    m_p0        = Point(p0.x + spacex, p0.y + spacey);
-    m_p1        = Point(p1.x - spacex, p1.y - spacey);
+    m_p0            = Point(p0.x + spacex, p0.y + spacey);
+    m_p1            = Point(p1.x - spacex, p1.y - spacey);
 
-    m_width     = fabs(m_p0.x - m_p1.x);
-    m_height    = fabs(m_p0.y - m_p1.y);
+    m_width         = fabs(m_p0.x - m_p1.x);
+    m_height        = fabs(m_p0.y - m_p1.y);
 
 
-    float sbwidth = m_width / 3.0;
-    float sbheight = m_height / 3.0;
+    float sbwidth   = m_width / 3.0;
+    float sbheight  = m_height / 3.0;
     
     for(int i = 0; i < 9; ++i){
         Point pa(m_p0.x + (i%3) * sbwidth, m_p0.y + (i/3) * sbheight);
@@ -30,7 +32,7 @@ void BigBoard::setLocations(Point p0, Point p1)
 /**************************************************************************************************/
 void BigBoard::reset()
 {
-    for(auto board : m_boards)
+    for(auto& board : m_boards)
         board.reset();
 
     m_winner = NO_WINNER;
@@ -49,17 +51,11 @@ void BigBoard::draw(ALLEGRO_FONT* font) const
     al_draw_line(m_p0.x, m_p0.y + 1.0*m_height/3.0, m_p1.x, m_p0.y + 1.0*m_height/3.0, COLOR.BOARD_COLOR, 3);
     al_draw_line(m_p0.x, m_p0.y + 2.0*m_height/3.0, m_p1.x, m_p0.y + 2.0*m_height/3.0, COLOR.BOARD_COLOR, 3);
 
-    for(auto board : m_boards)
+    for(const auto& board : m_boards)
         board.draw(font); 
-
-    //marks already won boards
-    for(auto board : m_boards)
-        board.drawWinner(font); 
-
-    this->drawWinner(font); 
 }
 /**************************************************************************************************/
-void BigBoard::drawWinner(ALLEGRO_FONT* font) const
+void BigBoard::drawWinner() const
 {
     if(m_winner == NO_WINNER)
         return;
@@ -101,7 +97,7 @@ void BigBoard::drawWinner(ALLEGRO_FONT* font) const
         p0.x = m_p0.x + m_width/2.0;
         p0.y = m_p0.y;
         p1.x = p0.x;
-        p1.y = m_p0.y;
+        p1.y = m_p1.y;
     }
 
     //horizontal up
@@ -150,7 +146,7 @@ void BigBoard::updateWinner()
     if(m_winner != NO_WINNER) //if there is already a winner there is no reason to check
         return;
 
-    for(auto board : m_boards)
+    for(auto& board : m_boards)
         board.updateWinner();
 
     //left to right diagonal
