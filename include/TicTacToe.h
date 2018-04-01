@@ -96,6 +96,8 @@ public:
 
     void changeTurn() {m_turn = m_turn == &m_player1 ? &m_player2 : &m_player1;}
 
+    void drawGameInfo();
+
 private:
     //Graphic representation related members
     ALLEGRO_DISPLAY* m_display;

@@ -185,9 +185,12 @@ void TicTacToe::draw()
 {
     al_clear_to_color(COLOR.BACKGROUND);
     m_bboard.draw(m_fonts.normal);
+
+    drawGameInfo();
     
     //just to know the limits
     ////////////////////////
+    /*
     al_draw_rectangle(m_bboard.m_p0.x, m_bboard.m_p0.y, m_bboard.m_p1.x, m_bboard.m_p1.y, COLOR.WHITE, 3);
     
     for(auto board : m_bboard.m_boards)
@@ -195,11 +198,33 @@ void TicTacToe::draw()
 
     float last = (m_dispdata.height - m_bboard.m_p1.y) * .8;
     al_draw_rectangle(m_bboard.m_p0.x, m_bboard.m_p1.y + 10, m_bboard.m_p1.x, m_bboard.m_p1.y + last, COLOR.WHITE, 3);
+    */
     ////////////////////////
     
     m_cursor.draw(COLOR.PURPLE);
 
     al_flip_display();
+}
+/**************************************************************************************************/
+void TicTacToe::drawGameInfo()
+{
+    std::string player1 = m_player1.getName() + ": " + m_player1.getPiece();
+    std::string player2 = m_player2.getName() + ": " + m_player2.getPiece();
+    std::string currentPlayer = "Turn: " + m_turn->getName();
+    float spaceFromBoard = 10;
+
+    al_draw_text(m_fonts.normal, COLOR.WHITE,
+                 m_bboard.m_p0.x, m_bboard.m_p1.y + spaceFromBoard,
+                 ALLEGRO_ALIGN_LEFT, player1.c_str());
+
+    al_draw_text(m_fonts.normal, COLOR.WHITE,
+                 m_bboard.m_p1.x, m_bboard.m_p1.y + spaceFromBoard,
+                 ALLEGRO_ALIGN_RIGHT, player2.c_str());
+
+    float xcenter = (m_bboard.m_p0.x + m_bboard.m_p1.x) / 2.0;
+    al_draw_text(m_fonts.normal, COLOR.WHITE,
+                 xcenter, m_bboard.m_p1.y + spaceFromBoard,
+                 ALLEGRO_ALIGN_CENTER, currentPlayer.c_str());
 }
 /**************************************************************************************************/
 void TicTacToe::run()
