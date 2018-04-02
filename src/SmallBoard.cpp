@@ -193,7 +193,8 @@ void SmallBoard::updateWinner()
             m_cells[Position::RIGHT_DOWN].piece == m_cells[Position::RIGHT_CENTER].piece)
         m_winner = m_cells[Position::RIGHT_DOWN].piece;
 
-    else if(std::all_of(m_cells.begin(), m_cells.end(), [](auto cell){return cell.piece != EMPTY;}))
+    else if(std::all_of(m_cells.begin(), m_cells.end(),
+            [](const auto& cell){return cell.piece != EMPTY;}))
         m_winner = TIE;
 }
 /**************************************************************************************************/

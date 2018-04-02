@@ -60,6 +60,10 @@ void TicTacToe::play()
             }
 
             selectCell(aiPlay.second);
+
+            if(std::any_of(m_bboard.m_boards.begin(), m_bboard.m_boards.end(),
+               [](const auto& board){return board.getWinner() != NO_WINNER;}))
+                break;
         }
 
         if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -121,10 +125,12 @@ void TicTacToe::handleKeyboardInput(ALLEGRO_EVENT* ev)
             break;
 
         case ALLEGRO_KEY_ENTER:
-            if(m_currboardidx == Position::NONE){   //selecting a board
-                selectBoard(m_cursor.m_boardidx);
-            }else{                                  //selecting a cell 
-                selectCell(m_cursor.m_cellidx);
+            if(m_currboardidx == Position::NONE){
+                if(!selectBoard(m_cursor.m_boardidx)) //if an invalid board was selected
+                    drawCursorError();
+            }else{
+                if(!selectCell(m_cursor.m_cellidx))
+                    drawCursorError();
             }
             break;
 
@@ -143,10 +149,6 @@ bool TicTacToe::selectBoard(int position)
 
         return true;
     }
-
-    m_cursor.draw(COLOR.CURSOR_ERROR);
-    al_flip_display();
-    al_rest(1);
 
     return false;
 }
@@ -190,7 +192,7 @@ void TicTacToe::updateWinner()
     m_bboard.updateWinner();
 }
 /**************************************************************************************************/
-void TicTacToe::draw()
+void TicTacToe::draw() const
 {
     al_clear_to_color(COLOR.BACKGROUND);
     m_bboard.draw(m_fonts.normal);
@@ -217,7 +219,7 @@ void TicTacToe::draw()
     al_flip_display();
 }
 /**************************************************************************************************/
-void TicTacToe::drawGameInfo()
+void TicTacToe::drawGameInfo() const
 {
     std::string player1 = m_player1.getName() + ": " + m_player1.getPiece();
     std::string player2 = m_player2.getName() + ": " + m_player2.getPiece();
@@ -238,7 +240,7 @@ void TicTacToe::drawGameInfo()
                  ALLEGRO_ALIGN_CENTER, currentPlayer.c_str());
 }
 /**************************************************************************************************/
-void TicTacToe::drawBoardWinners()
+void TicTacToe::drawBoardWinners() const
 {
     for(const auto& board : m_bboard.m_boards)
         board.drawWinner();
@@ -382,5 +384,12 @@ void TicTacToe::reset(std::string nameP1, std::string pieceP1, std::string nameP
     //empy the stack of plays
 }
 /**************************************************************************************************/
+void TicTacToe::drawCursorError() const
+{
+    draw();
+    m_cursor.draw(COLOR.CURSOR_ERROR);
+    al_flip_display();
+    al_rest(1);
+}
 
 

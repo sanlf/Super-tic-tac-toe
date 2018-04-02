@@ -61,7 +61,7 @@ void Cursor::reposition(int boardidx, int cellidx)
 }
 /**************************************************************************************************/
 //draws the cursor at its position in color
-void Cursor::draw(ALLEGRO_COLOR color)
+void Cursor::draw(ALLEGRO_COLOR color) const
 {
     al_draw_rectangle(m_p0.x, m_p0.y, m_p1.x, m_p1.y, color, m_thickness);
 }

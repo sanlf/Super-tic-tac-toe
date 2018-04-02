@@ -30,7 +30,7 @@ class Cursor{
     void move(Position position);
 
     //draws the cursor at its position in color
-    void draw(ALLEGRO_COLOR color);
+    void draw(ALLEGRO_COLOR color) const;
     
     private:
     const BigBoard& m_board;

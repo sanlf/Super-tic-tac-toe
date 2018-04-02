@@ -198,7 +198,8 @@ void BigBoard::updateWinner()
         m_winner = m_boards[Position::RIGHT_DOWN].m_winner;
 
     //finally checks if there is a tie
-    else if(std::all_of(m_boards.begin(), m_boards.end(), [](auto board){return board.getWinner() == TIE;}))
+    else if(std::all_of(m_boards.begin(), m_boards.end(),
+            [](const auto& board){return board.getWinner() == TIE;}))
         m_winner = TIE;
 }
 /**************************************************************************************************/

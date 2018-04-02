@@ -2,6 +2,7 @@
 #define TICTACTOE_H
 
 #include <string> //for std::string
+#include <algorithm> //for std::any_of
 
 #include <allegro5/allegro.h> //for most of the game
 #include <allegro5/allegro_native_dialog.h> //for native box messages
@@ -78,7 +79,7 @@ public:
     */
     bool putPiece(int cellidx);
 
-    void draw();
+    void draw() const;
 
     /**
         \brief Method to end the current game showing the winner if there is any.
@@ -95,9 +96,13 @@ public:
 
     void changeTurn() {m_turn = m_turn == &m_player1 ? &m_player2 : &m_player1;}
 
-    void drawGameInfo();
+    void drawGameInfo() const;
 
-    void drawBoardWinners();
+    void drawBoardWinners() const;
+
+    //changes the color of the cursor indicating there was an error and stops momentarily
+    //the program in order to see it
+    void drawCursorError() const;
 
 private:
     //Graphic representation related members
