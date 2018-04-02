@@ -2,6 +2,7 @@
 #define TICTACTOE_H
 
 #include <string> //for std::string
+
 #include <allegro5/allegro.h> //for most of the game
 #include <allegro5/allegro_native_dialog.h> //for native box messages
 #include <allegro5/allegro_primitives.h> //for drawing rectangles and lines
@@ -45,7 +46,7 @@ public:
     */
     TicTacToe(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* eventQueue, ALLEGRO_TIMER* timer, GameFonts fonts, ALLEGRO_DISPLAY_MODE dispdata);
     
-    void reset(std::string nameP1, std::string pieceP1, std::string nameP2, std::string pieceP2);
+    void reset(std::string nameP1, std::string pieceP1, std::string nameP2, std::string pieceP2, Type typePlayer2 = Type::HUMAN);
 
     /**
         \brief Method to play the game. This is run in order to actually play.
@@ -75,7 +76,7 @@ public:
     /**
         \brief Method to put a piece in a cell of a small board.
     */
-    bool putPiece();
+    bool putPiece(int cellidx);
 
     void draw();
 

@@ -2,8 +2,12 @@
 #define PLAYER_H
 
 #include <string> //for string
+#include <vector> //for std::vector
+#include <utility> //for std::pair
+#include <random> //for std::random_device, std::mt19937, std::uniform_int_distribution
 
 #include "Enumerations.h" //for Type and Position enumerations
+#include "Constants.h" //for EMPTY
 #include "Colors.h" //for struct Colors
 #include "BigBoard.h" //for BigBoard
 
@@ -53,6 +57,11 @@ class Player
         */
         void setName(std::string newName) { m_name = newName; }
 
+        //sets the type of player, Human or AI
+        void setType(Type newType) { m_type = newType; }
+
+        std::pair<Position, Position> agentDecision(Position currpos);
+
     private:
         std::string m_name;
         std::string m_piece;
@@ -60,5 +69,7 @@ class Player
         const BigBoard& m_board;
         ALLEGRO_COLOR m_color;
 };
+
+std::vector< std::pair<Position, Position> > legalPlays(const BigBoard& board, Position currpos);
 
 #endif // PLAYER_H

@@ -35,6 +35,7 @@ void TicTacToe::play()
     bool redraw = true;
     //bool redrawCursor = false;
     ALLEGRO_EVENT ev;
+    std::pair<Position, Position> aiPlay;
 
     al_start_timer(m_timer);
     while(m_winner == NO_WINNER){
@@ -52,7 +53,13 @@ void TicTacToe::play()
         if(m_turn->getType() == Type::HUMAN){
             handleUserInput(&ev);    
         }else{
-            //handleAIplay
+            aiPlay = m_turn->agentDecision(static_cast<Position>(m_currboardidx));
+
+            if(m_currboardidx == Position::NONE){
+                selectBoard(aiPlay.first);
+            }
+
+            selectCell(aiPlay.second);
         }
 
         if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -146,7 +153,7 @@ bool TicTacToe::selectBoard(int position)
 /**************************************************************************************************/
 bool TicTacToe::selectCell(int position)
 {
-    if(!putPiece())
+    if(!putPiece(position))
         return false;
 
     //put play in stack
@@ -166,15 +173,15 @@ bool TicTacToe::selectCell(int position)
     return true;
 }
 /**************************************************************************************************/
-bool TicTacToe::putPiece()
+bool TicTacToe::putPiece(int cellidx)
 {
     if(m_currboardidx == Position::NONE) //there is no board selected
         return false;
 
-    if(m_bboard[m_currboardidx][m_cursor.m_cellidx].piece != EMPTY) //the cell is already ocuppied
+    if(m_bboard[m_currboardidx][cellidx].piece != EMPTY) //the cell is already ocuppied
         return false;
 
-    m_bboard[m_currboardidx][m_cursor.m_cellidx].piece = m_turn->getPiece();
+    m_bboard[m_currboardidx][cellidx].piece = m_turn->getPiece();
     return true;
 }
 /**************************************************************************************************/
@@ -251,11 +258,12 @@ void TicTacToe::menu()
     Point txtpos = Point(width/2.0, 0);
 
     unsigned short curridx = 0;
-    std::array<std::string, 4> menuOption;
-    menuOption[0] = "Play";
-    menuOption[1] = "Instructions";
-    menuOption[2] = "About";
-    menuOption[3] = "Exit";
+    std::array<std::string, 5> menuOption;
+    menuOption[0] = "Play: PvAI";
+    menuOption[1] = "Play: PvP";
+    menuOption[2] = "Instructions";
+    menuOption[3] = "About";
+    menuOption[4] = "Exit";
 
     ALLEGRO_EVENT ev;
     while(ev.type != ALLEGRO_EVENT_DISPLAY_CLOSE){
@@ -296,7 +304,12 @@ void TicTacToe::menu()
                     break;
 
                 case ALLEGRO_KEY_ENTER:
-                    if(menuOption[curridx] == "Play"){
+                    if(menuOption[curridx] == "Play: PvAI"){
+                        reset("PLAYER1", "X", "PLAYER2", "O", Type::AI);
+                        play();
+                    }
+
+                    if(menuOption[curridx] == "Play: PvP"){
                         reset("PLAYER1", "X", "PLAYER2", "O");
                         play();
                     }
@@ -349,13 +362,16 @@ void TicTacToe::displayInstructions()
     handleReturnToMenu(m_eventQueue);
 }
 /**************************************************************************************************/
-void TicTacToe::reset(std::string nameP1, std::string pieceP1, std::string nameP2, std::string pieceP2)
+void TicTacToe::reset(std::string nameP1, std::string pieceP1, std::string nameP2, std::string pieceP2, Type typePlayerTwo /*= Type::HUMAN*/)
 {
     m_winner = NO_WINNER;
     m_player1.setName(nameP1);
     m_player1.setPiece(pieceP1);
+
     m_player2.setName(nameP2);
     m_player2.setPiece(pieceP2);
+    m_player2.setType(typePlayerTwo);
+
     m_cursor.reposition(Position::LEFT_UP);
 
     m_currboardidx = Position::NONE;
@@ -364,8 +380,7 @@ void TicTacToe::reset(std::string nameP1, std::string pieceP1, std::string nameP
     m_bboard.reset();
     
     //empy the stack of plays
-
-    //reset cursor
 }
 /**************************************************************************************************/
+
 
