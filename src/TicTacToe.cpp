@@ -33,12 +33,14 @@ TicTacToe::TicTacToe(ALLEGRO_DISPLAY* display,
 void TicTacToe::play()
 {
     bool redraw = true;
-    //bool redrawCursor = false;
     ALLEGRO_EVENT ev;
-    std::pair<Position, Position> aiPlay;
+
+    //this lambda tells wheter escape was pressed or not
+    auto closegame = [](ALLEGRO_EVENT e){return e.type == ALLEGRO_EVENT_KEY_UP &&
+                                         e.keyboard.keycode == ALLEGRO_KEY_ESCAPE;};
 
     al_start_timer(m_timer);
-    while(m_winner == NO_WINNER){
+    while(m_winner == NO_WINNER && !closegame(ev)){
         al_wait_for_event(m_eventQueue, &ev);
 
         if(ev.type == ALLEGRO_EVENT_TIMER)
@@ -53,27 +55,21 @@ void TicTacToe::play()
         if(m_turn->getType() == Type::HUMAN){
             handleUserInput(&ev);    
         }else{
-            aiPlay = m_turn->agentDecision(static_cast<Position>(m_currboardidx));
+            std::pair<Position, Position> aiPlay;
+
+            aiPlay = m_turn->agentDecision(m_currboardidx);
 
             if(m_currboardidx == Position::NONE){
                 selectBoard(aiPlay.first);
             }
 
             selectCell(aiPlay.second);
-
-            if(std::any_of(m_bboard.m_boards.begin(), m_bboard.m_boards.end(),
-               [](const auto& board){return board.getWinner() != NO_WINNER;}))
-                break;
         }
-
-        if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
-            break;
     }
 
     endgame();
 
-    al_clear_to_color(COLOR.BACKGROUND);
-    handleReturnToMenu(m_eventQueue);
+    al_flush_event_queue(m_eventQueue); //clean the event queue after playing
 }
 /**************************************************************************************************/
 void TicTacToe::endgame()
@@ -90,10 +86,10 @@ void TicTacToe::endgame()
          }else{
              std::string msg = "The game ended in a tie";
              al_show_native_message_box(m_display,
-                                    "Tie",
-                                  "Tie",
-                                  msg.c_str(),
-                                  nullptr, ALLEGRO_MESSAGEBOX_OK_CANCEL );
+                                        "Tie",
+                                        "Tie",
+                                        msg.c_str(),
+                                        nullptr, ALLEGRO_MESSAGEBOX_OK_CANCEL );
          }
     }
 }
@@ -126,16 +122,12 @@ void TicTacToe::handleKeyboardInput(ALLEGRO_EVENT* ev)
 
         case ALLEGRO_KEY_ENTER:
             if(m_currboardidx == Position::NONE){
-                if(!selectBoard(m_cursor.m_boardidx)) //if an invalid board was selected
+                if(!selectBoard(m_cursor.m_boardidx))   //if an invalid board was selected
                     drawCursorError();
             }else{
-                if(!selectCell(m_cursor.m_cellidx))
+                if(!selectCell(m_cursor.m_cellidx))     //if an invalid cell was selected
                     drawCursorError();
             }
-            break;
-
-        case ALLEGRO_KEY_ESCAPE:
-            ev->type = ALLEGRO_EVENT_DISPLAY_CLOSE;        
             break;
     } 
 }
@@ -190,6 +182,13 @@ bool TicTacToe::putPiece(int cellidx)
 void TicTacToe::updateWinner()
 {
     m_bboard.updateWinner();
+
+    for(const auto& board : m_bboard.m_boards){
+        if(board.getWinner() != NO_WINNER){
+            m_winner = board.getWinner();
+            break;
+        }
+    }
 }
 /**************************************************************************************************/
 void TicTacToe::draw() const
@@ -309,11 +308,13 @@ void TicTacToe::menu()
                     if(menuOption[curridx] == "Play: PvAI"){
                         reset("PLAYER1", "X", "PLAYER2", "O", Type::AI);
                         play();
+                        std::cout << "Finished AI game" << std::endl;
                     }
 
-                    if(menuOption[curridx] == "Play: PvP"){
+                    else if(menuOption[curridx] == "Play: PvP"){
                         reset("PLAYER1", "X", "PLAYER2", "O");
                         play();
+                        std::cout << "Finished PvP game" << std::endl;
                     }
 
                     else if(menuOption[curridx] == "Instructions"){
@@ -380,6 +381,8 @@ void TicTacToe::reset(std::string nameP1, std::string pieceP1, std::string nameP
     m_turn = &m_player1;
 
     m_bboard.reset();
+
+    al_flush_event_queue(m_eventQueue); //clean the event queue before playing
     
     //empy the stack of plays
 }

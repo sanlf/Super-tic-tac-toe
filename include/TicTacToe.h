@@ -2,7 +2,7 @@
 #define TICTACTOE_H
 
 #include <string> //for std::string
-#include <algorithm> //for std::any_of
+#include <iostream>
 
 #include <allegro5/allegro.h> //for most of the game
 #include <allegro5/allegro_native_dialog.h> //for native box messages
