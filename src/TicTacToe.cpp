@@ -53,7 +53,7 @@ void TicTacToe::play()
         }
 
         if(m_turn->getType() == Type::HUMAN){
-            handleUserInput(&ev);    
+            handleUserInput(&ev);
         }else{
             std::pair<Position, Position> aiPlay;
 
@@ -75,6 +75,9 @@ void TicTacToe::play()
 void TicTacToe::endgame()
 {
     if(m_winner != NO_WINNER){
+
+        draw();
+
         if(m_winner != TIE){
              std::string msg = ", you won!";
              Player* winner = m_player1.getPiece() == m_winner ? &m_player1 : &m_player2;
@@ -129,14 +132,14 @@ void TicTacToe::handleKeyboardInput(ALLEGRO_EVENT* ev)
                     drawCursorError();
             }
             break;
-    } 
+    }
 }
 /**************************************************************************************************/
 bool TicTacToe::selectBoard(int position)
 {
     if(m_bboard[position].getWinner() == NO_WINNER){
         m_currboardidx = static_cast<Position>(position);
-        m_cursor.reposition(position, static_cast<int>(Position::LEFT_UP));  
+        m_cursor.reposition(position, static_cast<int>(Position::LEFT_UP));
         //put this in the stack
 
         return true;
@@ -156,13 +159,13 @@ bool TicTacToe::selectCell(int position)
 
     if(m_bboard[position].getWinner() == NO_WINNER){
         m_currboardidx = static_cast<Position>(position);
-        m_cursor.reposition(position, static_cast<int>(Position::LEFT_UP));  
+        m_cursor.reposition(position, static_cast<int>(Position::LEFT_UP));
     }else{
         m_currboardidx = Position::NONE;
-        m_cursor.reposition(static_cast<int>(Position::LEFT_UP));  
-    }       
+        m_cursor.reposition(static_cast<int>(Position::LEFT_UP));
+    }
 
-   changeTurn(); 
+   changeTurn();
 
     return true;
 }
@@ -181,14 +184,65 @@ bool TicTacToe::putPiece(int cellidx)
 /**************************************************************************************************/
 void TicTacToe::updateWinner()
 {
+    if(m_winner != NO_WINNER) //if there is already a winner there is no reason to check
+        return;
+
     m_bboard.updateWinner();
 
-    for(const auto& board : m_bboard.m_boards){
-        if(board.getWinner() != NO_WINNER){
-            m_winner = board.getWinner();
-            break;
-        }
-    }
+    auto m_boards = m_bboard.m_boards;
+
+    //left to right diagonal
+    if(m_boards[Position::CENTER].m_winner != EMPTY &&
+       m_boards[Position::CENTER].m_winner == m_boards[Position::LEFT_UP].m_winner &&
+       m_boards[Position::CENTER].m_winner == m_boards[Position::RIGHT_DOWN].m_winner)
+        m_winner = m_boards[Position::CENTER].m_winner;
+
+    //right to left diagonal
+    else if(m_boards[Position::CENTER].m_winner != EMPTY &&
+            m_boards[Position::CENTER].m_winner == m_boards[Position::RIGHT_UP].m_winner &&
+            m_boards[Position::CENTER].m_winner == m_boards[Position::LEFT_DOWN].m_winner)
+        m_winner = m_boards[Position::CENTER].m_winner;
+
+    //horizontal center
+    else if(m_boards[Position::CENTER].m_winner != EMPTY &&
+            m_boards[Position::CENTER].m_winner == m_boards[Position::LEFT_CENTER].m_winner &&
+            m_boards[Position::CENTER].m_winner == m_boards[Position::RIGHT_CENTER].m_winner)
+        m_winner = m_boards[Position::CENTER].m_winner;
+
+    //vertical center
+    else if(m_boards[Position::CENTER].m_winner != EMPTY &&
+            m_boards[Position::CENTER].m_winner == m_boards[Position::CENTER_UP].m_winner &&
+            m_boards[Position::CENTER].m_winner == m_boards[Position::CENTER_DOWN].m_winner)
+        m_winner = m_boards[Position::CENTER].m_winner;
+
+    //horizontal up
+    else if(m_boards[Position::LEFT_UP].m_winner != EMPTY &&
+            m_boards[Position::LEFT_UP].m_winner == m_boards[Position::CENTER_UP].m_winner &&
+            m_boards[Position::LEFT_UP].m_winner == m_boards[Position::RIGHT_UP].m_winner)
+        m_winner = m_boards[Position::LEFT_UP].m_winner;
+
+    //vertical left
+    else if(m_boards[Position::LEFT_UP].m_winner != EMPTY &&
+            m_boards[Position::LEFT_UP].m_winner == m_boards[Position::LEFT_CENTER].m_winner &&
+            m_boards[Position::LEFT_UP].m_winner == m_boards[Position::LEFT_DOWN].m_winner)
+        m_winner = m_boards[Position::LEFT_UP].m_winner;
+
+    //horizontal down
+    else if(m_boards[Position::RIGHT_DOWN].m_winner != EMPTY &&
+            m_boards[Position::RIGHT_DOWN].m_winner == m_boards[Position::LEFT_DOWN].m_winner &&
+            m_boards[Position::RIGHT_DOWN].m_winner == m_boards[Position::CENTER_DOWN].m_winner)
+        m_winner = m_boards[Position::RIGHT_DOWN].m_winner;
+
+    //vertical right
+    else if(m_boards[Position::RIGHT_DOWN].m_winner != EMPTY &&
+            m_boards[Position::RIGHT_DOWN].m_winner == m_boards[Position::RIGHT_UP].m_winner &&
+            m_boards[Position::RIGHT_DOWN].m_winner == m_boards[Position::RIGHT_CENTER].m_winner)
+        m_winner = m_boards[Position::RIGHT_DOWN].m_winner;
+
+    //finally checks if there is a tie
+    else if(std::all_of(m_boards.begin(), m_boards.end(),
+            [](const auto& board){return board.getWinner() == TIE;}))
+        m_winner = TIE;
 }
 /**************************************************************************************************/
 void TicTacToe::draw() const
@@ -199,12 +253,12 @@ void TicTacToe::draw() const
     drawGameInfo();
 
     drawBoardWinners();
-    
+
     //just to know the limits
     ////////////////////////
     /*
     al_draw_rectangle(m_bboard.m_p0.x, m_bboard.m_p0.y, m_bboard.m_p1.x, m_bboard.m_p1.y, COLOR.WHITE, 3);
-    
+
     for(const auto& board : m_bboard.m_boards)
         al_draw_rectangle(board.m_p0.x, board.m_p0.y, board.m_p1.x, board.m_p1.y, COLOR.BLUE, 3);
 
@@ -212,7 +266,7 @@ void TicTacToe::draw() const
     al_draw_rectangle(m_bboard.m_p0.x, m_bboard.m_p1.y + 10, m_bboard.m_p1.x, m_bboard.m_p1.y + last, COLOR.WHITE, 3);
     */
     ////////////////////////
-    
+
     m_cursor.draw(COLOR.PURPLE);
 
     al_flip_display();
@@ -383,7 +437,7 @@ void TicTacToe::reset(std::string nameP1, std::string pieceP1, std::string nameP
     m_bboard.reset();
 
     al_flush_event_queue(m_eventQueue); //clean the event queue before playing
-    
+
     //empy the stack of plays
 }
 /**************************************************************************************************/
