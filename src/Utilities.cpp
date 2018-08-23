@@ -14,7 +14,7 @@ std::string readFile(const std::string& filePath)
             text += line + endline;
         }
 
-        text += "\nPress ESC to return to the menu";
+        text += "\nPresiona ESC para regresar al menú";
         file.close();
     }
 
@@ -33,4 +33,3 @@ void handleReturnToMenu(ALLEGRO_EVENT_QUEUE* eventQueue)
     }
 }
 /**************************************************************************************************/
-

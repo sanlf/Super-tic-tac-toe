@@ -17,17 +17,17 @@ TicTacToe::TicTacToe(ALLEGRO_DISPLAY* display,
                                                              Point(dispdata.width,
                                                                    0.8*dispdata.height)),
                                                     m_currboardidx(Position::NONE),
-                                                    m_player1("P1", "X",
+                                                    m_player1("J1", "X",
                                                               Type::HUMAN,
                                                               m_bboard,
                                                               COLOR.CURSOR_P1),
-                                                    m_player2("P2", "O",
+                                                    m_player2("J2", "O",
                                                               Type::HUMAN,
                                                               m_bboard,
                                                               COLOR.CURSOR_P2)
 {
     m_turn = &m_player1;
-    reset("PLAYER1", "X", "PLAYER2", "O");
+    reset("JUGADOR1", "X", "JUGADOR2", "O");
 }
 /**************************************************************************************************/
 void TicTacToe::play()
@@ -79,18 +79,18 @@ void TicTacToe::endgame()
         draw();
 
         if(m_winner != TIE){
-             std::string msg = ", you won!";
+             std::string msg = ", ganaste!";
              Player* winner = m_player1.getPiece() == m_winner ? &m_player1 : &m_player2;
              al_show_native_message_box(m_display,
-                                        "Congratulations!",
-                                        "Congratulations!",
+                                        "Felicidades!",
+                                        "Felicidades!",
                                         (winner->getName() + msg).c_str(),
                                         nullptr, ALLEGRO_MESSAGEBOX_OK_CANCEL );
          }else{
-             std::string msg = "The game ended in a tie";
+             std::string msg = "El juego terminó en empate";
              al_show_native_message_box(m_display,
-                                        "Tie",
-                                        "Tie",
+                                        "Empate",
+                                        "Empate",
                                         msg.c_str(),
                                         nullptr, ALLEGRO_MESSAGEBOX_OK_CANCEL );
          }
@@ -276,7 +276,7 @@ void TicTacToe::drawGameInfo() const
 {
     std::string player1 = m_player1.getName() + ": " + m_player1.getPiece();
     std::string player2 = m_player2.getName() + ": " + m_player2.getPiece();
-    std::string currentPlayer = "Turn: " + m_turn->getName();
+    std::string currentPlayer = "Turno: " + m_turn->getName();
     float spaceFromBoard = 10;
 
     al_draw_text(m_fonts.normal, m_player1.getColor(),
@@ -314,11 +314,11 @@ void TicTacToe::menu()
 
     unsigned short curridx = 0;
     std::array<std::string, 5> menuOption;
-    menuOption[0] = "Play: PvAI";
-    menuOption[1] = "Play: PvP";
-    menuOption[2] = "Instructions";
-    menuOption[3] = "About";
-    menuOption[4] = "Exit";
+    menuOption[0] = "Jugar: Contra Computadora";
+    menuOption[1] = "Jugar: Contra Otro Jugador";
+    menuOption[2] = "Instrucciones";
+    menuOption[3] = "Acerca de";
+    menuOption[4] = "Salir";
 
     ALLEGRO_EVENT ev;
     while(ev.type != ALLEGRO_EVENT_DISPLAY_CLOSE){
@@ -326,7 +326,7 @@ void TicTacToe::menu()
 
         //draws title
         txtpos = Point(width/2.0, 0);
-        al_draw_text(m_fonts.title, COLOR.WHITE, txtpos.x, txtpos.y, ALLEGRO_ALIGN_CENTER, "TIC-TAC-TOE 81");
+        al_draw_text(m_fonts.title, COLOR.WHITE, txtpos.x, txtpos.y, ALLEGRO_ALIGN_CENTER, "Gato 81");
 
         //draws all menu options
         txtpos.y = height/3.0;
@@ -359,23 +359,23 @@ void TicTacToe::menu()
                     break;
 
                 case ALLEGRO_KEY_ENTER:
-                    if(menuOption[curridx] == "Play: PvAI"){
-                        reset("PLAYER1", "X", "PLAYER2", "O", Type::AI);
+                    if(menuOption[curridx] == "Jugar: Contra Computadora"){
+                        reset("JUGADOR1", "X", "JUGADOR2", "O", Type::AI);
                         play();
-                        std::cout << "Finished AI game" << std::endl;
+                        std::cout << "Se terminó juego contra computadora" << std::endl;
                     }
 
-                    else if(menuOption[curridx] == "Play: PvP"){
-                        reset("PLAYER1", "X", "PLAYER2", "O");
+                    else if(menuOption[curridx] == "Jugar: Contra Otro Jugador"){
+                        reset("JUGADOR1", "X", "JUGADOR2", "O");
                         play();
-                        std::cout << "Finished PvP game" << std::endl;
+                        std::cout << "Se terminó juego contra otro jugador" << std::endl;
                     }
 
-                    else if(menuOption[curridx] == "Instructions"){
+                    else if(menuOption[curridx] == "Instrucciones"){
                         displayInstructions();
                     }
 
-                    else if(menuOption[curridx] == "About"){
+                    else if(menuOption[curridx] == "Acerca de"){
                         displayAbout();
                     }
 
@@ -448,5 +448,3 @@ void TicTacToe::drawCursorError() const
     al_flip_display();
     al_rest(1);
 }
-
-

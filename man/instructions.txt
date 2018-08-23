@@ -1,22 +1,20 @@
-This is Tic-Tac-Toe with a tweak, instead of only one board with nine cells, this has a board with nine smaller boards with nine cells each one! 81 cells in total!
+Este juego es el clásico juego del Gato con un cambio: ¡En vez de tener solo un tablero con nueve celdas, este tiene un tablero con nueve tableros pequeños con nueve celdas cada uno!
+¡81 celdas en total!
 
-The objective of the game is the same as a regular tic-tac-toe: to make 3 cells in a row. The difference here is that instead of 3 cells, you have to make 3 small BOARDS in a row.
-As you may have expected, in order to be the winner of a particular board you have to have 3 cells of your own in a row.
+El objetivo del juego es el mismo que el del Gato tradicional: marcar tres celdas consecutivas; sólo que aquí, estas celdas son los pequeños tableros de los que hablábamos.
+Para marcar esos tableros pequeños, debes marcar tres celdas consecutivas propias en ellos. Es decir, que tres celdas marcadas tuyas estén juntas vertical, horizontal, o diagonalmente.
 
-What I mean with "making 3 in a row" is to put your piece in a way were vertically, horizontally or diagonally there are 3 of your pieces next to each other.
+Lo que hace especial al Gato81 es la siguiente regla: cuando marcas una celda, el siguiente jugador tiene que marcar en el tablero pequeño relativo a la posición que tú marcaste. Por ejemplo:
+Si el Jugador1 marca en el tablero pequeño del centro, en su esquina superior izquierda, el siguiente jugador tiene que marcar en el tablero pequeño de la esquina superior izquierda.
 
-What makes this game special is the next rule: when you put a piece in a cell, the next player has to put his piece in the board relative to the position of the piece. For example:
-If player1 puts a piece in the center board in its top left cell, the next player has to put a piece in the top left board.
+La excepción a la regla anterior es cuando el tablero pequeño al que te mandaron ya está marcado por alguno de los jugadores, o está empatado. Es entonces cuando el jugador en turno tiene la opción de escoger en qué tablero pequeño quiere marcar su celda.
 
-The exception to the previous rule is when the board the next player is sent to has already a winner (or ended in a tie), then the player in turn has the option to pick in what big board he wants to put his piece (provided it doesn't have a winner yet).
+Igual que en el Gato tradicional, no puedes marcar celda donde ya se hizo una.
 
-Maybe needless to say but you can't put a piece where there is already one.
+El juego continúa hasta que un jugador gane o nadie pueda poner más piezas y termine en empate.
 
+Para jugar debes usar el teclado. Puedes mover la posición en la que vas a marcar tu celda con las flechas, y marcar con el ENTER. En cualquier momento del juego, puedes salir con el botón de ESC al menú.
 
-The game continues until a player wins or nobody can put anymore pieces and ends up in a tie.
+Para cerrar el juego, puedes presionar ESC en el menú.
 
-
-The whole game is played with a keyboard. You move the cursor with the arrows and select things with ENTER. At any moment of the game you can exit with ESC to the menu. If ESC is pressed while in the menu, the window is closed.
-
-Have fun!
-
+¡Diviértete!

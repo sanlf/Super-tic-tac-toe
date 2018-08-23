@@ -1,7 +1,7 @@
-Game with GUI made with Allegro5.
+Juego desarrollado en C++ con Allegro5.
 
-Made by Sotomayor Samaniego Luis Fernando.
+Hecho por Sotomayor Samaniego Luis Fernando y Noriega Ortiz Víctor Ariel
 
-Version 1.0.
+Versión 1.1
 
-Hope you enjoy playing it !
+¡Esperamos que disfrutes jugando!
