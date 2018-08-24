@@ -8,10 +8,11 @@ void Colors::initialize()
     GREEN              = al_map_rgb(0, 255, 0);
     BLUE               = al_map_rgb(0, 0, 255);
     PURPLE             = al_map_rgb(255, 0, 255);
+    GRAY               = al_map_rgb(128, 128, 128);
 
     BACKGROUND         = BLACK;
     BOARD_COLOR        = WHITE;
-    CELL_COLOR         = GREEN;
+    CELL_COLOR         = GRAY;
     CURSOR             = GREEN;
     CURSOR_P1          = GREEN;
     CURSOR_P2          = BLUE;

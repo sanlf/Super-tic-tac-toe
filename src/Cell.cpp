@@ -17,7 +17,8 @@ Cell::Cell(Point p0, Point p1, std::string piece/* = ""*/)
 /**************************************************************************************************/
 void Cell::draw(ALLEGRO_FONT* font) const
 {
-    al_draw_text(font, COLOR.WHITE,
+    ALLEGRO_COLOR color = this->piece == "X"? COLOR.CURSOR_P1 : COLOR.CURSOR_P2;
+    al_draw_text(font, color,
                  (2*p0.x + p1.x)/3.0, (2*p0.y + p1.y)/3.0,
                  ALLEGRO_ALIGN_LEFT, piece.c_str());
 }

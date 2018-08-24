@@ -267,7 +267,10 @@ void TicTacToe::draw() const
     */
     ////////////////////////
 
-    m_cursor.draw(COLOR.PURPLE);
+    if(m_turn == &m_player1)
+        m_cursor.draw(COLOR.CURSOR_P1);
+    else
+        m_cursor.draw(COLOR.CURSOR_P2);
 
     al_flip_display();
 }
