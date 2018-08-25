@@ -8,7 +8,8 @@ void Colors::initialize()
     GREEN              = al_map_rgb(0, 255, 0);
     BLUE               = al_map_rgb(0, 0, 255);
     PURPLE             = al_map_rgb(255, 0, 255);
-    GRAY               = al_map_rgb(128, 128, 128);
+    //GRAY               = al_map_rgb(128, 128, 128);
+    GRAY               = al_map_rgb(47, 79, 79);
 
     BACKGROUND         = BLACK;
     BOARD_COLOR        = WHITE;

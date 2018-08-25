@@ -329,7 +329,7 @@ void TicTacToe::menu()
 
         //draws title
         txtpos = Point(width/2.0, 0);
-        al_draw_text(m_fonts.title, COLOR.WHITE, txtpos.x, txtpos.y, ALLEGRO_ALIGN_CENTER, "Gato 81");
+        al_draw_text(m_fonts.title, COLOR.WHITE, txtpos.x, txtpos.y, ALLEGRO_ALIGN_CENTER, "Gato 9x9");
 
         //draws all menu options
         txtpos.y = height/3.0;
