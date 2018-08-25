@@ -241,7 +241,9 @@ void TicTacToe::updateWinner()
 
     //finally checks if there is a tie
     else if(std::all_of(m_boards.begin(), m_boards.end(),
-            [](const auto& board){return board.getWinner() == TIE;}))
+            [](const auto& board){return board.getWinner() == TIE
+                                  ||     board.getWinner() == "X"
+                                  ||     board.getWinner() == "O";}))
         m_winner = TIE;
 }
 /**************************************************************************************************/
